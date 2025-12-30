@@ -1,0 +1,44 @@
+# Node modules
+node_modules/
+
+# Build outputs
+dist/
+out/
+build/
+release/
+
+# Vite cache
+.vite/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+*.log
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Electron specific
+*.asar
+electron-builder.yml
+electron-builder.json
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE/editor files
+.vscode/
+.idea/
+*.swp
+
+# Coverage / testing
+coverage/
+*.lcov
+
+# Misc
+*.tgz

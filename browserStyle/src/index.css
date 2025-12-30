@@ -1,0 +1,10 @@
+@import "tailwindcss";
+
+
+@layer components {
+
+    .cardBody{
+        @apply p-4 bg-green-300 rounded-lg shadow-md
+    }
+    /* Add your custom component styles here */
+}
