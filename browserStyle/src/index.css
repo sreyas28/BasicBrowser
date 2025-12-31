@@ -1,10 +1,89 @@
 @import "tailwindcss";
-
-
 @layer components {
-
-    .cardBody{
-        @apply p-4 bg-green-300 rounded-lg shadow-md
+    /* Your original global style */
+    .cardBody {
+        @apply p-4 bg-green-300 rounded-lg shadow-md;
     }
-    /* Add your custom component styles here */
+    /* --- KIDBOT SPECIFIC COMPONENTS --- */
+    /* These only work inside a container with the class .kidbot-shell */
+    .kidbot-shell .chat-bubble-bot {
+        @apply p-4 bg-white border-4 border-blue-200 rounded-3xl shadow-sm text-blue-900 font-bold max-w-[80%] mb-4;
+        border-bottom-left-radius: 4px;
+    }
+    .kidbot-shell .chat-bubble-user {
+        @apply p-4 bg-yellow-100 border-4 border-yellow-300 rounded-3xl shadow-sm text-orange-900 font-bold max-w-[80%] mb-4 self-end;
+        border-bottom-right-radius: 4px;
+    }
+}
+
+
+/* SCOPE EVERYTHING TO .kidbot-shell 
+   This prevents the chatbot styles from "breaking" your other pages
+*/
+
+.kidbot-shell {
+    --kid-primary: #57C1FF;
+    --kid-secondary: #FF8BA7;
+    font-family: 'Comic Sans MS', 'Chalkboard SE', 'Comic Neue', cursive;
+}
+
+.kidbot-shell .kidbot-background {
+    background-image: url('./myimage.png');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.kidbot-shell .kidbot-chat-list {
+    width: 100%;
+    max-width: 900px;
+    flex-grow: 1;
+    overflow-y: auto;
+    padding: 20px 60px;
+    margin-top: 120px;
+    margin-bottom: 20px;
+}
+
+.kidbot-shell .kidbot-input-container {
+    width: 95%;
+    max-width: 800px;
+    background: #73D352;
+    border: 4px solid #489D2D;
+    border-radius: 50px;
+    padding: 10px 15px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 30px;
+    box-shadow: 0 6px 0 #3a8024;
+}
+
+.kidbot-shell .kidbot-input-container input {
+    flex-grow: 1;
+    background: white;
+    border-radius: 30px;
+    border: none;
+    padding: 12px 20px;
+    font-size: 1.2rem;
+    outline: none;
+}
+
+.kidbot-shell .send-button {
+    background: #E33E3E;
+    border: 4px solid #9B1C1C;
+    color: white;
+    width: 55px;
+    height: 55px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    box-shadow: 0 4px 0 #7a1212;
+    cursor: pointer;
 }

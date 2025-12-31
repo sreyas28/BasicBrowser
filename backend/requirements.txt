@@ -1,0 +1,5 @@
+fastapi==0.95.2
+uvicorn[standard]==0.23.1
+transformers==4.43.0
+torch==2.6.0
+# Optional: for smaller installs you can replace torch with 'xformers' or use CPU-only wheels

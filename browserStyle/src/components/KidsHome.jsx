@@ -1,3 +1,5 @@
+import { useNavigate } from "react-router-dom";
+
 function KidsHome() {
   const links = [
     {
@@ -42,7 +44,24 @@ function KidsHome() {
       color: "from-teal-300 to-cyan-300",
       textColor: "text-teal-900",
     },
+    {
+      name: "Ask a question",
+      url: null,
+      emoji: "❓",
+      color: "from-indigo-300 to-purple-300",
+      textColor: "text-indigo-900",
+    },
   ];
+
+  const navigate = useNavigate();
+  function openAsk() {
+    navigate("/ask");
+  }
+
+  function openInApp(url) {
+    const u = encodeURIComponent(url);
+    navigate(`/open?url=${u}`);
+  }
 
   return (
     <div className="min-h-screen bg-linear-to-b from-sky-100 to-indigo-100">
@@ -55,25 +74,40 @@ function KidsHome() {
 
       {/* Cards */}
       <main className="max-w-5xl mx-auto px-4 py-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {links.map((link) => (
-          <a
-            key={link.name}
-            href={link.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className={`group block rounded-2xl bg-linear-to-br ${link.color} p-6 shadow-lg border hover:shadow-xl transition-transform hover:-translate-y-1 focus:outline-none focus:ring-4`}
-          >
-            <div className="flex items-center gap-4">
-              <span className="text-4xl">{link.emoji}</span>
-              <h2
-                className={`text-xl font-extrabold ${link.textColor} group-hover:underline`}
+        {links.map((link) =>
+          link.url ? (
+            <div key={link.name}>
+              <button
+                onClick={() => openInApp(link.url)}
+                className={`w-full text-left group block rounded-2xl bg-linear-to-br ${link.color} p-6 shadow-lg border hover:shadow-xl transition-transform hover:-translate-y-1 focus:outline-none focus:ring-4`}
               >
-                {link.name}
-              </h2>
+                <div className="flex items-center gap-4">
+                  <span className="text-4xl">{link.emoji}</span>
+                  <h2
+                    className={`text-xl font-extrabold ${link.textColor} group-hover:underline`}
+                  >
+                    {link.name}
+                  </h2>
+                </div>
+              </button>
             </div>
-          </a>
-        ))}
+          ) : (
+            <button
+              key={link.name}
+              onClick={openAsk}
+              className={`w-full text-left group block rounded-2xl bg-linear-to-br ${link.color} p-6 shadow-lg border hover:shadow-xl transition-transform hover:-translate-y-1 focus:outline-none focus:ring-4`}
+            >
+              <div className="flex items-center gap-4">
+                <span className="text-4xl">{link.emoji}</span>
+                <h2 className={`text-xl font-extrabold ${link.textColor} group-hover:underline`}>
+                  {link.name}
+                </h2>
+              </div>
+            </button>
+          )
+        )}
       </main>
+      
     </div>
   );
 }
