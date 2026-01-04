@@ -5,13 +5,36 @@
   "license": "MIT",
   "author": "",
   "type": "commonjs",
-  "main": "index.js",
+  "main": "main.js",
   "scripts": {
     "start": "electron .",
     "devLive": "npx electronmon --trace-warnings .",
+    "dist": "electron-builder",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "dependencies": {
+  "build": {
+    "appId": "com.mycompany.myapp",
+    "productName": "MyElectronApp",
+    "files": [
+      "main.js",
+      "preload.js",
+      "dist/**/*"
+    ],
+    "directories": {
+      "buildResources": "assets"
+    },
+    "mac": {
+      "category": "public.app-category.utilities"
+    },
+    "win": {
+      "target": "nsis"
+    },
+    "linux": {
+      "target": "AppImage"
+    }
+  },
+
+  "devDependencies": {
     "electron": "^39.2.7",
     "electronmon": "^2.0.4"
   }
