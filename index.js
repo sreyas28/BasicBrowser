@@ -14,7 +14,7 @@ function createWindow() {
   });
 
 
-win.webContents.openDevTools();
+// win.webContents.openDevTools();
 
   const startUrl = url.format({
     pathname: path.join(__dirname, './browserStyle/dist/index.html'),
