@@ -89,7 +89,7 @@ function KidsHome() {
           <div key={link.name} className="h-full">
             <button
               onClick={() => (link.url ? openInApp(link.url) : openAsk())}
-              className={`w-full h-full bg-gradient-to-br ${link.color} ${link.hoverColor} p-8 rounded-3xl shadow-xl border-2 border-white/40 backdrop-blur-sm transition-all duration-300 hover:shadow-2xl hover:-translate-y-2 focus:outline-none focus:ring-4 focus:ring-offset-2 active:scale-95 group`}
+              className={`w-full h-full bg-linear-to-br ${link.color} ${link.hoverColor} p-8 rounded-3xl shadow-xl border-2 border-white/40 backdrop-blur-sm transition-all duration-300 hover:shadow-2xl hover:-translate-y-2 focus:outline-none focus:ring-4 focus:ring-offset-2 active:scale-95 group`}
             >
               <div className="flex flex-col items-center gap-4 text-center h-full justify-center">
                 <span className="text-6xl group-hover:scale-125 transition-transform duration-300">

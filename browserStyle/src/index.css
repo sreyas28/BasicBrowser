@@ -19,6 +19,18 @@
         @apply bg-[url('./myimage.png')] bg-cover bg-center bg-fixed;
     }
 
+    .back-button {
+        @apply bg-blue-500 border-4 border-blue-900 text-white px-4 py-2 rounded-lg font-bold text-lg shadow-[0_4px_0_#1e3a8a] cursor-pointer transition-all;
+    }
+
+    .back-button:hover {
+        @apply bg-blue-600 shadow-[0_2px_0_#1e3a8a] translate-y-0.5;
+    }
+
+    .back-button:active {
+        @apply bg-blue-700 shadow-none translate-y-1;
+    }
+
 }
 
 
