@@ -32,12 +32,13 @@ uvicorn app:app --host 127.0.0.1 --port 8000 --reload
 # 1) Build renderer
 cd browserStyle
 npm install
-npm run build
+% npm run build
 
 # 2) Start Electron from project root
 cd ..
 npm install
-npm start
+npm run dist 
+% npm start
 
 Important: to enable the KidBot background artwork, place the provided `image.png` file into `browserStyle/public/image.png`.
 Then run the dev server (`npm run dev`) or rebuild the renderer so the image is served at `/image.png`.
