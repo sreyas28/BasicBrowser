@@ -13,8 +13,8 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "build": {
-    "appId": "com.mycompany.myapp",
-    "productName": "MyElectronApp",
+    "appId": "com.mycompany.kidssafebrowser",
+    "productName": "KidsSafeBrowser",
     "files": [
       "main.js",
       "preload.js",
@@ -23,6 +23,7 @@
     "directories": {
       "buildResources": "assets"
     },
+    "icon": "assets/icon.ico",
     "mac": {
       "category": "public.app-category.utilities"
     },
@@ -33,9 +34,9 @@
       "target": "AppImage"
     }
   },
-
   "devDependencies": {
     "electron": "^39.2.7",
+    "electron-builder": "^26.0.12",
     "electronmon": "^2.0.4"
   }
 }

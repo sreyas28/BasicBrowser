@@ -7,19 +7,22 @@ from typing import Optional
 import os
 import re
 import random
-from transformers import pipeline, AutoTokenizer, AutoModelForSeq2SeqLM
+from transformers import AutoTokenizer, AutoModelForCausalLM
 import torch
 from torch.cuda import is_available as cuda_available
 
-# Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 # ========== Configuration ==========
 class Config:
-    # CHANGED: 'flan-t5-base' is much smarter than 'small' and stops the gibberish.
-    MODEL_NAME = os.environ.get("KIDBOT_MODEL", "google/flan-t5-base")
+    # FASTEST: Using Phi-1_5 (1.3B) - Microsoft's fastest model
+    MODEL_NAME = os.environ.get("KIDBOT_MODEL", "microsoft/phi-1_5")
     DEVICE = 0 if cuda_available() else -1
+    
+    # Model optimization flags
+    USE_FLASH_ATTENTION = True  # Enable if available
+    USE_BETTERTRANSFORMER = True  # PyTorch optimization
     
     BANNED_WORDS = {
         "sexual": ["sex", "porn", "nude", "naked", "penis", "vagina", "boobs"],
@@ -57,61 +60,128 @@ class SafetyManager:
 class ModelManager:
     def __init__(self, config: Config):
         self.config = config
-        self.pipeline = None
+        self.model = None
+        self.tokenizer = None
         self.is_loaded = False
 
     def load(self):
         try:
             logger.info(f"Loading model: {self.config.MODEL_NAME}...")
-            self.tokenizer = AutoTokenizer.from_pretrained(self.config.MODEL_NAME)
-            self.model = AutoModelForSeq2SeqLM.from_pretrained(self.config.MODEL_NAME)
             
+            # Load tokenizer
+            self.tokenizer = AutoTokenizer.from_pretrained(
+                self.config.MODEL_NAME, 
+                trust_remote_code=True
+            )
+            
+            # Set pad token if not present
+            if self.tokenizer.pad_token is None:
+                self.tokenizer.pad_token = self.tokenizer.eos_token
+            
+            # OPTIMIZED: Load with half precision for GPU, float32 for CPU
+            dtype = torch.float16 if self.config.DEVICE >= 0 else torch.float32
+            
+            self.model = AutoModelForCausalLM.from_pretrained(
+                self.config.MODEL_NAME,
+                trust_remote_code=True,
+                torch_dtype=dtype
+            )
+            
+            # OPTIMIZED: Move to GPU if available
             if self.config.DEVICE >= 0:
                 self.model = self.model.to(f"cuda:{self.config.DEVICE}")
             
-            self.pipeline = pipeline(
-                "text2text-generation",
-                model=self.model,
-                tokenizer=self.tokenizer,
-                device=self.config.DEVICE
-            )
+            # OPTIMIZED: Enable BetterTransformer for faster inference
+            if self.config.USE_BETTERTRANSFORMER:
+                try:
+                    self.model = self.model.to_bettertransformer()
+                    logger.info("BetterTransformer enabled")
+                except Exception as e:
+                    logger.warning(f"Could not enable BetterTransformer: {e}")
+            
+            # OPTIMIZED: Set to eval mode and disable gradient computation
+            self.model.eval()
+            
             self.is_loaded = True
-            logger.info("Model loaded successfully!")
+            logger.info("Model loaded and optimized successfully!")
+            
         except Exception as e:
             logger.error(f"Failed to load model: {e}")
 
-    def generate(self, prompt: str, **kwargs) -> str:
-        if not self.is_loaded: return "Model not ready."
+    @torch.inference_mode()  # OPTIMIZED: Faster than torch.no_grad()
+    def generate(self, prompt: str, max_tokens: int = 150) -> str:
+        if not self.is_loaded:
+            return "Model not ready."
+        
         try:
-            # We strictly limit max_new_tokens to prevent rambling
-            res = self.pipeline(prompt, **kwargs)
-            return res[0]['generated_text']
+            # FASTEST: Tokenize with minimal processing
+            inputs = self.tokenizer(
+                prompt,
+                return_tensors="pt",
+                truncation=True,
+                max_length=256  # Even shorter for speed
+            )
+            
+            if self.config.DEVICE >= 0:
+                inputs = {k: v.to(f"cuda:{self.config.DEVICE}") for k, v in inputs.items()}
+            
+            # FASTEST: Speed-optimized generation parameters
+            outputs = self.model.generate(
+                **inputs,
+                max_new_tokens=max_tokens,
+                do_sample=True,
+                temperature=0.6,  # Lower for more focused output
+                top_p=0.85,  # Slightly lower for speed
+                top_k=40,  # Reduced for faster sampling
+                repetition_penalty=1.15,  # Slightly higher to end faster
+                pad_token_id=self.tokenizer.pad_token_id,
+                eos_token_id=self.tokenizer.eos_token_id,
+                use_cache=True  # Cache for speed
+            )
+            
+            # Decode only the new tokens
+            generated_text = self.tokenizer.decode(
+                outputs[0][inputs['input_ids'].shape[1]:],
+                skip_special_tokens=True
+            )
+            
+            return generated_text.strip()
+            
         except Exception as e:
             logger.error(f"Generation error: {e}")
             return ""
 
 # ========== Helper Logic ==========
 def create_prompt(message: str, age: int) -> str:
-    # CHANGED: T5 models prefer this "Question: ... Answer:" format
-    return (
-        f"Answer the following question nicely for a {age} year old child. "
-        f"Question: {message} "
-        f"Answer:"
-    )
+    # FASTEST: Ultra-short prompt for speed
+    return f"Answer for a 5-year-old in exactly 3 sentences:\n{message}\nAnswer:"
 
-def quality_check(response: str, user_input: str) -> str:
-    clean_response = response.strip()
+def clean_response(response: str, user_input: str) -> str:
+    # Remove common artifacts
+    response = response.strip()
     
-    # Filter out common bad outputs or empty ones
-    if not clean_response or len(clean_response) < 5 or "rtc" in clean_response:
+    # Stop at newlines or common end markers
+    if '\n' in response:
+        response = response.split('\n')[0]
+    
+    # Remove any remaining prompt artifacts
+    response = re.sub(r'(Question:|Answer:|Instruct:|Output:).*', '', response, flags=re.IGNORECASE)
+    response = response.strip()
+    
+    # Quality check
+    if not response or len(response) < 5:
         fallbacks = [
-            "That is a really interesting question! What do you think?",
-            "I am not sure, but I would love to find out with you.",
+            "That's an interesting question! What do you think?",
+            "I'm not sure, but let's think about it together!",
             "That's a fun thought! Can you ask me something else?"
         ]
         return random.choice(fallbacks)
-        
-    return clean_response
+    
+    # Truncate if too long (should be rare with our settings)
+    if len(response) > 300:
+        response = response[:297] + "..."
+    
+    return response
 
 # ========== App Lifecycle ==========
 @asynccontextmanager
@@ -134,23 +204,38 @@ app.add_middleware(
 
 @app.post("/chat", response_model=ChatResponse)
 async def chat(req: ChatRequest):
+    # Safety check
     if not app.state.safety.is_input_safe(req.message):
-        return ChatResponse(reply="I can't talk about that. Let's talk about something happy!", is_safe=False)
+        return ChatResponse(
+            reply="I can't talk about that. Let's talk about something happy!",
+            is_safe=False
+        )
 
+    # Create prompt
     prompt = create_prompt(req.message, req.estimated_age)
     
-    # CHANGED: Tighter settings to stop hallucination
-    raw_reply = app.state.model.generate(
-        prompt, 
-        max_length=200, 
-        do_sample=True, 
-        temperature=0.3,       # Low temperature = Focused, Logic-based answers
-        top_p=0.9,
-        repetition_penalty=1.2 # Stops "rtc rtc" repetition
-    )
+    # FASTEST: Adjusted for 3-sentence responses
+    raw_response = app.state.model.generate(prompt, max_tokens=120)
     
-    final_reply = quality_check(raw_reply, req.message)
+    # Clean and validate response
+    final_reply = clean_response(raw_response, req.message)
+    
+    # Output safety check
+    if not app.state.safety.is_input_safe(final_reply):
+        return ChatResponse(
+            reply="I tried to answer, but got confused. Can we talk about something else?",
+            is_safe=True
+        )
+
     return ChatResponse(reply=final_reply)
+
+@app.get("/health")
+async def health():
+    return {
+        "status": "healthy",
+        "model_loaded": app.state.model.is_loaded,
+        "model_name": app.state.config.MODEL_NAME
+    }
 
 if __name__ == "__main__":
     import uvicorn

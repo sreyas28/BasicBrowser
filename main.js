@@ -1,4 +1,4 @@
-const { app, BrowserWindow, session } = require('electron');
+const { app, BrowserWindow, session, Menu } = require('electron');
 const url = require('url');
 const path = require('path');
 
@@ -16,7 +16,45 @@ function createWindow() {
   });
 
 
-// win.webContents.openDevTools();
+  // win.webContents.openDevTools();
+
+  /* Menu Setup */
+  const template = [
+    {
+      label: 'File',
+      submenu: [
+        { role: 'quit' }
+      ]
+    },
+    {
+      label: 'View',
+      submenu: [
+        { role: 'reload' },
+        { role: 'forceReload' },
+        { role: 'toggleDevTools' },
+        { type: 'separator' },
+        { role: 'resetZoom' },
+        { role: 'zoomIn' },
+        { role: 'zoomOut' },
+        { type: 'separator' },
+        { role: 'togglefullscreen' }
+      ]
+    },
+    {
+      label: 'Help',
+      submenu: [
+        {
+          label: 'Remove Websites',
+          click: () => {
+            win.webContents.send('cmd:toggle-remove-mode');
+          }
+        }
+      ]
+    }
+  ];
+
+  const menu = Menu.buildFromTemplate(template);
+  Menu.setApplicationMenu(menu);
 
   const startUrl = url.format({
     pathname: path.join(__dirname, './dist/index.html'),
@@ -28,7 +66,7 @@ function createWindow() {
 
 }
 
-app.whenReady().then(() => { 
+app.whenReady().then(() => {
   session.defaultSession.webRequest.onHeadersReceived((details, callback) => {
     callback({
       responseHeaders: {
@@ -44,7 +82,7 @@ app.whenReady().then(() => {
       }
     });
   });
-  createWindow(); 
+  createWindow();
 });
 
 app.on('window-all-closed', () => {
