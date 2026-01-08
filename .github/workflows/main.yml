@@ -50,30 +50,54 @@ jobs:
   #         name: KidsSafeBrowser-macOS
   #         path: dist/*.dmg
 
+  # release:
+  #   # needs: [build-linux, build-windows, build-macos]
+  #   needs: [build-linux]
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Download all artifacts
+  #       uses: actions/download-artifact@v4
+  #       with:
+  #         path: artifacts
+
+  #     - name: Create tag
+  #       run: |
+  #         git config --global user.name "github-actions"
+  #         git config --global user.email "actions@github.com"
+  #         git tag v${{ github.run_number }}
+  #         git push origin v${{ github.run_number }}
+
+  #     - name: Create GitHub Release
+  #       uses: softprops/action-gh-release@v1
+  #       with:
+  #         files: artifacts/**/*
+  #         tag_name: v${{ github.run_number }}
+  #         name: "Release v${{ github.run_number }}"
+  #         draft: false
+  #         prerelease: false
+  #         token: ${{ secrets.GH_TOKEN }}
   release:
-    # needs: [build-linux, build-windows, build-macos]
     needs: [build-linux]
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
       - name: Download all artifacts
         uses: actions/download-artifact@v4
         with:
           path: artifacts
 
-      - name: Create tag
+      - name: Commit artifacts to branch
         run: |
           git config --global user.name "github-actions"
           git config --global user.email "actions@github.com"
-          git tag v${{ github.run_number }}
-          git push origin v${{ github.run_number }}
 
-      - name: Create GitHub Release
-        uses: softprops/action-gh-release@v1
-        with:
-          files: artifacts/**/*
-          tag_name: v${{ github.run_number }}
-          name: "Release v${{ github.run_number }}"
-          draft: false
-          prerelease: false
-          token: ${{ secrets.GH_TOKEN }}
+          # Ensure we’re on the same branch that triggered the workflow
+          git checkout ${{ github.ref_name }}
+
+          # Add everything from ./artifacts
+          git add artifacts/
+          git commit -m "Add release artifacts from run ${{ github.run_number }}"
+          git push origin ${{ github.ref_name }}
 
