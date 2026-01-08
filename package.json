@@ -9,6 +9,7 @@
   "scripts": {
     "start": "electron .",
     "devLive": "npx electronmon --trace-warnings .",
+    "build:web": "cd browserStyle && npm install && npm run build",
     "build": "electron-builder",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
