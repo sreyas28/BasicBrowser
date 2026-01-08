@@ -24,8 +24,36 @@ jobs:
           name: KidsSafeBrowser-Linux
           path: dist/*.AppImage
 
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm install
+      - run: npm run build -- -w
+      - uses: actions/upload-artifact@v4
+        with:
+          name: KidsSafeBrowser-Windows
+          path: dist/*.exe
+
+  build-macos:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm install
+      - run: npm run build -- -m
+      - uses: actions/upload-artifact@v4
+        with:
+          name: KidsSafeBrowser-macOS
+          path: dist/*.dmg        
+
   release:
-    needs: [build-linux]
+    needs: [build-linux, build-windows, build-macos]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -34,26 +62,40 @@ jobs:
         with:
           name: KidsSafeBrowser-Linux
           path: dist/linux
-          
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: KidsSafeBrowser-Windows
+          path: dist/windows
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: KidsSafeBrowser-macOS
+          path: dist/macos
+
       - name: Making tags
+        # ls dist/linux
         run: |
-          ls dist/linux
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
           git tag ${{ env.tagName }}
           git push origin ${{ env.tagName }}
         env:
-          tagName: v${{ github.run_number }}.0.0
+          tagName: v0.0.${{ github.run_number }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Create Release and Upload Asset
+      - name: Create Release and Upload Assets
         uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ env.tagName }}
           name: "KidsSafeBrowser ${{ env.tagName }}"
-          files: dist/linux/*.AppImage
+          files: |
+            dist/linux/*.AppImage
+            dist/windows/*.exe
+            dist/macos/*.dmg
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          tagName: v${{ github.run_number }}.0.0
+          tagName: v0.0.${{ github.run_number }}
+
 
 
