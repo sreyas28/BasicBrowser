@@ -92,7 +92,7 @@ npm run build:web
 - macOS → App category: Utilities
 - Linux → AppImage
 
-For the latest release, see [Releases](https://github.com/yourusername/kids-browser/releases/latest)
+For the latest release, see [Releases](https://github.com/sreyas28/kids-browser/releases/latest)
 
 ## 📜 License
 
