@@ -22,36 +22,37 @@ jobs:
           name: KidsSafeBrowser-Linux
           path: dist/*.AppImage
 
-  build-windows:
-    runs-on: windows-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-      - run: npm install
-      - run: npm run build -- -w
-      - uses: actions/upload-artifact@v4
-        with:
-          name: KidsSafeBrowser-Windows
-          path: dist/*.exe
+  # build-windows:
+  #   runs-on: windows-latest
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - uses: actions/setup-node@v4
+  #       with:
+  #         node-version: 20
+  #     - run: npm install
+  #     - run: npm run build -- -w
+  #     - uses: actions/upload-artifact@v4
+  #       with:
+  #         name: KidsSafeBrowser-Windows
+  #         path: dist/*.exe
 
-  build-macos:
-    runs-on: macos-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-      - run: npm install
-      - run: npm run build -- -m
-      - uses: actions/upload-artifact@v4
-        with:
-          name: KidsSafeBrowser-macOS
-          path: dist/*.dmg
+  # build-macos:
+  #   runs-on: macos-latest
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - uses: actions/setup-node@v4
+  #       with:
+  #         node-version: 20
+  #     - run: npm install
+  #     - run: npm run build -- -m
+  #     - uses: actions/upload-artifact@v4
+  #       with:
+  #         name: KidsSafeBrowser-macOS
+  #         path: dist/*.dmg
 
   release:
-    needs: [build-linux, build-windows, build-macos]
+    # needs: [build-linux, build-windows, build-macos]
+    needs: [build-linux]
     runs-on: ubuntu-latest
     steps:
       - name: Download all artifacts
@@ -64,8 +65,7 @@ jobs:
         with:
           files: artifacts/**/*
           tag_name: v${{ github.run_number }}
-          release_name: Release v${{ github.run_number }}  
+          name: Release v${{ github.run_number }}  
           draft: false
           prerelease: false
-        env:
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+          token: ${{ secrets.GH_TOKEN }}
