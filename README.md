@@ -92,7 +92,7 @@ npm run build:web
 - macOS → App category: Utilities
 - Linux → AppImage
 
-For the latest release, see [Releases](https://github.com/sreyas28/BasicBrowser/releases/tag/v0.0.29)
+For the latest release, see [Releases](https://github.com/sreyas28/BasicBrowser/releases)
 
 ## 📜 License
 
