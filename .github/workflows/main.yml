@@ -99,5 +99,4 @@ jobs:
           # Add everything from ./artifacts
           git add artifacts/
           git commit -m "Add release artifacts from run ${{ github.run_number }}"
-          git push origin ${{ github.ref_name }}
-
+          git push https://x-access-token:${{ secrets.GH_TOKEN }}@github.com/${{ github.repository }} HEAD:${{ github.ref_name }}
