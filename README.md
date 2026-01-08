@@ -1,44 +1,97 @@
-# React + Vite
+# KidsSafeBrowser 🧒🔒
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+KidsSafeBrowser is a cross-platform desktop application built with Electron that provides a safe and customizable browsing experience for children. It integrates a React-based renderer (via Vite) and supports backend AI features through KidBot.
 
-Currently, two official plugins are available:
+## ✨ Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- 🚀 Electron-based desktop app (Windows, macOS, Linux)
+- 🎨 Custom renderer built with React + Vite
+- 🔧 Live reload during development with electronmon
+- 📦 Cross-platform builds using electron-builder
+- 🌐 Separate build:web script for building the renderer only
+- 🖼️ Optional KidBot background artwork integration
+- 🔒 Safe browsing environment tailored for kids
 
-## React Compiler
+## 📂 Project Structure
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+```
+kids-browser/
+├── main.js              # Electron main process
+├── preload.js           # Preload scripts
+├── dist/                # Compiled renderer output
+├── browserStyle/        # React + Vite renderer source
+├── assets/              # Icons and build resources
+└── package.json         # Project configuration
+```
 
-## Expanding the ESLint configuration
+## ⚙️ Installation & Setup
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+### 1. Backend Setup (KidBot)
 
-# 1) Create & activate venv
-cd C:\work\BasicBrowser\backend
+```bash
+cd backend
 python -m venv .venv
-.\.venv\Scripts\Activate.ps1
-
-# 2) Install dependencies
+source .venv/bin/activate   # On Windows: .\.venv\Scripts\Activate.ps1
 pip install -r requirements.txt
+```
 
-# 3) (Optional) choose a model (env var). Example:
-$env:KIDBOT_MODEL = 'google/flan-t5-small'
+Optional - Choose a model:
 
-# 4) Start the backend
+```bash
+export KIDBOT_MODEL="google/flan-t5-small"
+```
+
+Start backend server:
+
+```bash
 uvicorn app:app --host 127.0.0.1 --port 8000 --reload
+```
 
-# 1) Build renderer
+### 2. Renderer Setup
+
+**Option A: Build web renderer only**
+
+```bash
+npm run build:web
+```
+
+**Option B: Standard build inside browserStyle**
+
+```bash
 cd browserStyle
 npm install
-% npm run build
+npm run build
+```
 
-# 2) Start Electron from project root
+### 3. Electron App Setup
+
+```bash
 cd ..
 npm install
-npm run dist 
-% npm start
+npm start        # Run in development
+npm run devLive  # Run with live reload
+npm run build    # Build distributable packages
+```
 
-Important: to enable the KidBot background artwork, place the provided `image.png` file into `browserStyle/public/image.png`.
-Then run the dev server (`npm run dev`) or rebuild the renderer so the image is served at `/image.png`.
+## 🎨 KidBot Artwork
+
+To enable KidBot background artwork:
+
+1. Place your image at `browserStyle/public/image.png`
+2. Run the dev server or rebuild the renderer:
+
+```bash
+npm run dev
+# or
+npm run build:web
+```
+
+## 🖥️ Build Targets
+
+- Windows → NSIS installer
+- macOS → App category: Utilities
+- Linux → AppImage
+
+## 📜 License
+
+This project is licensed under the MIT License.
