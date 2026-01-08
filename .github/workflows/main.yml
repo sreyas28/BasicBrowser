@@ -22,37 +22,36 @@ jobs:
           name: KidsSafeBrowser-Linux
           path: dist/*.AppImage
 
-  # build-windows:
-  #   runs-on: windows-latest
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #     - uses: actions/setup-node@v4
-  #       with:
-  #         node-version: 20
-  #     - run: npm install
-  #     - run: npm run build -- -w
-  #     - uses: actions/upload-artifact@v4
-  #       with:
-  #         name: KidsSafeBrowser-Windows
-  #         path: dist/*.exe
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm install
+      - run: npm run build -- -w
+      - uses: actions/upload-artifact@v4
+        with:
+          name: KidsSafeBrowser-Windows
+          path: dist/*.exe
 
-  # build-macos:
-  #   runs-on: macos-latest
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #     - uses: actions/setup-node@v4
-  #       with:
-  #         node-version: 20
-  #     - run: npm install
-  #     - run: npm run build -- -m
-  #     - uses: actions/upload-artifact@v4
-  #       with:
-  #         name: KidsSafeBrowser-macOS
-  #         path: dist/*.dmg
+  build-macos:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm install
+      - run: npm run build -- -m
+      - uses: actions/upload-artifact@v4
+        with:
+          name: KidsSafeBrowser-macOS
+          path: dist/*.dmg
 
   # release:
-  #   # needs: [build-linux, build-windows, build-macos]
-  #   needs: [build-linux]
+  #   needs: [build-linux, build-windows, build-macos]
   #   runs-on: ubuntu-latest
   #   steps:
   #     - name: Download all artifacts
@@ -76,27 +75,4 @@ jobs:
   #         draft: false
   #         prerelease: false
   #         token: ${{ secrets.GH_TOKEN }}
-  release:
-    needs: [build-linux]
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
 
-      - name: Download all artifacts
-        uses: actions/download-artifact@v4
-        with:
-          path: artifacts
-
-      - name: Commit artifacts to branch
-        run: |
-          git config --global user.name "github-actions"
-          git config --global user.email "actions@github.com"
-
-          # Ensure we’re on the same branch that triggered the workflow
-          git checkout ${{ github.ref_name }}
-
-          # Add everything from ./artifacts
-          git add artifacts/
-          git commit -m "Add release artifacts from run ${{ github.run_number }}"
-          git push https://x-access-token:${{ secrets.GH_TOKEN }}@github.com/${{ github.repository }} HEAD:${{ github.ref_name }}
