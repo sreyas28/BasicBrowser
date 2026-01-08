@@ -9,7 +9,7 @@
   "scripts": {
     "start": "electron .",
     "devLive": "npx electronmon --trace-warnings .",
-    "dist": "electron-builder",
+    "build": "electron-builder",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "build": {
