@@ -70,6 +70,7 @@ jobs:
           path: dist/macos
 
       - name: Create Release
+        id: create_release
         uses: actions/create-release@v1
         with:
           tag_name: v1.0.0   # <-- change this dynamically or manually
