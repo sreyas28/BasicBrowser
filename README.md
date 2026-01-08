@@ -92,6 +92,8 @@ npm run build:web
 - macOS → App category: Utilities
 - Linux → AppImage
 
+For the latest release, see [Releases](https://github.com/yourusername/kids-browser/releases/latest)
+
 ## 📜 License
 
 This project is licensed under the MIT License.
