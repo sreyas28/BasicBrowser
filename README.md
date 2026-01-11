@@ -26,6 +26,7 @@ kids-browser/
 
 ## ⚙️ Installation & Setup
 
+
 ### 1. Backend Setup (KidBot)
 
 ```bash
