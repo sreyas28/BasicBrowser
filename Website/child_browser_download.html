@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CurioBrowser - Safe Internet for Children</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Comic Sans MS', 'Chalkboard SE', 'Comic Neue', cursive, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Animated background elements */
+        .floating-shapes {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .shape {
+            position: absolute;
+            opacity: 0.15;
+            animation: float 20s infinite ease-in-out;
+        }
+
+        .shape:nth-child(1) {
+            left: 10%;
+            top: 20%;
+            font-size: 80px;
+            animation-delay: 0s;
+        }
+
+        .shape:nth-child(2) {
+            right: 15%;
+            top: 40%;
+            font-size: 100px;
+            animation-delay: 2s;
+        }
+
+        .shape:nth-child(3) {
+            left: 20%;
+            bottom: 20%;
+            font-size: 90px;
+            animation-delay: 4s;
+        }
+
+        .shape:nth-child(4) {
+            right: 10%;
+            bottom: 30%;
+            font-size: 70px;
+            animation-delay: 6s;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0px) rotate(0deg);
+            }
+            50% {
+                transform: translateY(-30px) rotate(10deg);
+            }
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+            padding-top: 30px;
+            animation: slideDown 1s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .logo-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .logo {
+            font-size: 80px;
+            filter: drop-shadow(0 5px 15px rgba(0,0,0,0.3));
+        }
+
+        h1 {
+            font-size: 56px;
+            margin-bottom: 15px;
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.3);
+            letter-spacing: 2px;
+        }
+
+        .tagline {
+            font-size: 24px;
+            opacity: 0.95;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+            margin-bottom: 25px;
+        }
+
+        .hero-download-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 15px;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            font-size: 28px;
+            font-weight: bold;
+            padding: 20px 50px;
+            border-radius: 50px;
+            text-decoration: none;
+            box-shadow: 0 10px 30px rgba(245, 87, 108, 0.5);
+            transition: all 0.3s;
+            animation: bounce 2s infinite;
+        }
+
+        .hero-download-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 15px 40px rgba(245, 87, 108, 0.7);
+        }
+
+        .download-icon {
+            font-size: 36px;
+            animation: bounceUpDown 1s infinite;
+        }
+
+        @keyframes bounceUpDown {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-8px);
+            }
+        }
+
+        /* Hero section with illustration */
+        .hero-section {
+            background: white;
+            border-radius: 30px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 40px;
+            animation: fadeIn 1s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .hero-image {
+            flex: 1;
+            text-align: center;
+            font-size: 200px;
+            animation: spin 20s linear infinite;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .hero-content {
+            flex: 1;
+        }
+
+        .hero-content h2 {
+            font-size: 36px;
+            color: #667eea;
+            margin-bottom: 20px;
+        }
+
+        .hero-content p {
+            font-size: 20px;
+            color: #555;
+            line-height: 1.8;
+            margin-bottom: 15px;
+        }
+
+        /* Video/Demo section */
+        .video-section {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            border-radius: 30px;
+            padding: 50px;
+            margin-bottom: 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            animation: fadeIn 1.2s ease-out;
+        }
+
+        .video-section h2 {
+            color: white;
+            font-size: 42px;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .video-container {
+            background: #000;
+            border-radius: 20px;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 350px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .video-placeholder {
+            font-size: 120px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+                opacity: 0.8;
+            }
+            50% {
+                transform: scale(1.1);
+                opacity: 1;
+            }
+        }
+
+        /* Features grid */
+        .features-section {
+            background: white;
+            border-radius: 30px;
+            padding: 50px;
+            margin-bottom: 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: fadeIn 1.4s ease-out;
+        }
+
+        .features-section h2 {
+            text-align: center;
+            font-size: 42px;
+            color: #667eea;
+            margin-bottom: 40px;
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+        }
+
+        .feature {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            color: white;
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+            animation: popIn 0.6s ease-out backwards;
+        }
+
+        .feature:nth-child(1) { animation-delay: 0.1s; }
+        .feature:nth-child(2) { animation-delay: 0.2s; }
+        .feature:nth-child(3) { animation-delay: 0.3s; }
+        .feature:nth-child(4) { animation-delay: 0.4s; }
+        .feature:nth-child(5) { animation-delay: 0.5s; }
+        .feature:nth-child(6) { animation-delay: 0.6s; }
+        .feature:nth-child(7) { animation-delay: 0.7s; }
+
+        @keyframes popIn {
+            from {
+                transform: scale(0);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .feature:hover {
+            transform: translateY(-10px) scale(1.05);
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.5);
+        }
+
+        .feature-icon {
+            font-size: 60px;
+            margin-bottom: 15px;
+            animation: wiggle 3s infinite;
+        }
+
+        @keyframes wiggle {
+            0%, 100% { transform: rotate(-5deg); }
+            50% { transform: rotate(5deg); }
+        }
+
+        .feature h3 {
+            font-size: 24px;
+            margin-bottom: 12px;
+        }
+
+        .feature p {
+            font-size: 16px;
+            opacity: 0.95;
+            line-height: 1.6;
+        }
+
+        /* Screenshots section */
+        .screenshots-section {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            border-radius: 30px;
+            padding: 50px;
+            margin-bottom: 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: fadeIn 1.6s ease-out;
+        }
+
+        .screenshots-section h2 {
+            text-align: center;
+            font-size: 42px;
+            color: white;
+            margin-bottom: 40px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .screenshots-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .screenshot {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            text-align: center;
+            transition: transform 0.3s;
+            cursor: pointer;
+        }
+
+        .screenshot:hover {
+            transform: scale(1.05);
+        }
+
+        .screenshot-image {
+            font-size: 150px;
+            margin-bottom: 15px;
+        }
+
+        .screenshot-title {
+            font-size: 22px;
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        /* Download section */
+        .download-section {
+            background: white;
+            border-radius: 30px;
+            padding: 50px;
+            margin-bottom: 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: fadeIn 1.8s ease-out;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 42px;
+            color: #667eea;
+            margin-bottom: 40px;
+        }
+
+        .download-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .download-btn {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 40px;
+            border-radius: 25px;
+            text-decoration: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: all 0.3s;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 10px 30px rgba(245, 87, 108, 0.4);
+        }
+
+        .download-btn:hover {
+            transform: translateY(-10px) scale(1.05);
+            box-shadow: 0 20px 40px rgba(245, 87, 108, 0.6);
+        }
+
+        .download-btn-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+            animation: bounce 2s infinite;
+        }
+
+        .download-btn-os {
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .download-btn-size {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+
+        .info-banner {
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            border-left: 6px solid #f5576c;
+            padding: 30px;
+            margin-top: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        .info-banner h4 {
+            color: #f5576c;
+            margin-bottom: 15px;
+            font-size: 24px;
+        }
+
+        .info-banner ul {
+            margin-left: 25px;
+            color: #555;
+            line-height: 2;
+            font-size: 18px;
+        }
+
+        .info-banner li {
+            margin-bottom: 8px;
+        }
+
+        /* Trust badges */
+        .trust-section {
+            background: white;
+            border-radius: 30px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            animation: fadeIn 2s ease-out;
+        }
+
+        .trust-section h3 {
+            font-size: 32px;
+            color: #667eea;
+            margin-bottom: 30px;
+        }
+
+        .trust-badges {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            font-size: 80px;
+            transition: transform 0.3s;
+        }
+
+        .badge:hover {
+            transform: scale(1.2) rotate(10deg);
+        }
+
+        footer {
+            text-align: center;
+            color: white;
+            padding: 30px;
+            opacity: 0.95;
+            font-size: 18px;
+        }
+
+        .notification {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            color: white;
+            padding: 25px 35px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            display: none;
+            animation: slideIn 0.4s;
+            font-size: 20px;
+            z-index: 1000;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero-section {
+                flex-direction: column;
+                padding: 30px 20px;
+            }
+
+            .hero-image {
+                font-size: 120px;
+            }
+
+            h1 {
+                font-size: 38px;
+            }
+
+            .video-section, .features-section, .download-section, .screenshots-section {
+                padding: 30px 20px;
+            }
+
+            .features {
+                grid-template-columns: 1fr;
+            }
+
+            .download-buttons {
+                grid-template-columns: 1fr;
+            }
+
+            .shape {
+                font-size: 50px !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="floating-shapes">
+        <div class="shape">🌟</div>
+        <div class="shape">🚀</div>
+        <div class="shape">🎨</div>
+        <div class="shape">⭐</div>
+    </div>
+
+    <div class="container">
+        <header>
+            <div class="logo-container">
+                <div class="logo">🔍</div>
+                <div class="logo">🌈</div>
+                <div class="logo">🎈</div>
+            </div>
+            <h1>CurioBrowser</h1>
+            <p class="tagline">🎉 Explore the Internet Safely - Made for Curious Young Minds! 🎉</p>
+            <a href="#download" class="hero-download-btn">
+                <span class="download-icon">⬇️</span>
+                <span>Download Now!</span>
+            </a>
+        </header>
+
+        <div class="hero-section">
+            <div class="hero-image">🦸‍♂️</div>
+            <div class="hero-content">
+                <h2>Your Child's Super Safe Browser! 🛡️</h2>
+                <p>🌟 CurioBrowser is like a friendly superhero that keeps your kids safe while they explore and learn!</p>
+                <p>✨ No scary stuff, no bad websites, just fun learning and safe exploring!</p>
+                <p>🤖 With a special AI friend to help with homework and answer questions!</p>
+            </div>
+        </div>
+
+        <div class="video-section">
+            <h2>🎬 See CurioBrowser in Action! 🎬</h2>
+            <div class="video-container">
+                <div class="video-placeholder">📺</div>
+            </div>
+            <p style="color: white; margin-top: 20px; font-size: 22px;">Watch how easy and fun it is to browse safely!</p>
+        </div>
+
+        <div class="screenshots-section">
+            <h2>🖼️ Look at These Cool Features! 🖼️</h2>
+            <div class="screenshots-grid">
+                <div class="screenshot">
+                    <div class="screenshot-image">💬</div>
+                    <div class="screenshot-title">Chat with AI Helper</div>
+                </div>
+                <div class="screenshot">
+                    <div class="screenshot-image">🎮</div>
+                    <div class="screenshot-title">Fun & Safe Games</div>
+                </div>
+                <div class="screenshot">
+                    <div class="screenshot-image">📚</div>
+                    <div class="screenshot-title">Learning Resources</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="features-section">
+            <h2>🌟 Amazing Features for Kids! 🌟</h2>
+            <div class="features">
+                <div class="feature">
+                    <div class="feature-icon">🛡️</div>
+                    <h3>Super Safe!</h3>
+                    <p>Blocks all the scary and bad stuff automatically so you only see good things!</p>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">🔒</div>
+                    <h3>Zero Spying</h3>
+                    <p>We don't collect ANY information about you. Your privacy is super important!</p>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">🦠</div>
+                    <h3>Virus Fighter</h3>
+                    <p>Protects your computer from bad guys and nasty viruses like a superhero!</p>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">👨‍👩‍👧</div>
+                    <h3>Parent Approved</h3>
+                    <p>Mom and Dad can choose which websites are okay for you to visit!</p>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">🎨</div>
+                    <h3>Easy to Use</h3>
+                    <p>Big colorful buttons and simple design so it's super easy to use!</p>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">📦</div>
+                    <h3>Safe Sandbox</h3>
+                    <p>Everything happens in a special safe zone that protects your whole computer!</p>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">🤖</div>
+                    <h3>AI Best Friend</h3>
+                    <p>Your own smart robot friend that helps with homework and answers questions!</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="download-section" id="download">
+            <h2 class="section-title">⬇️ Download CurioBrowser Now! ⬇️</h2>
+            
+            <div class="download-buttons">
+                <a href="#" class="download-btn" onclick="downloadFile('windows'); return false;">
+                    <div class="download-btn-icon">🪟</div>
+                    <div class="download-btn-os">Windows</div>
+                    <div class="download-btn-size">Version 2.5.0 • 85 MB</div>
+                </a>
+
+                <a href="#" class="download-btn" onclick="downloadFile('mac'); return false;">
+                    <div class="download-btn-icon">🍎</div>
+                    <div class="download-btn-os">macOS</div>
+                    <div class="download-btn-size">Version 2.5.0 • 92 MB</div>
+                </a>
+
+                <a href="#" class="download-btn" onclick="downloadFile('linux'); return false;">
+                    <div class="download-btn-icon">🐧</div>
+                    <div class="download-btn-os">Linux</div>
+                    <div class="download-btn-size">Version 2.5.0 • 78 MB</div>
+                </a>
+            </div>
+
+            <div class="info-banner">
+                <h4>📋 What Your Computer Needs:</h4>
+                <ul>
+                    <li>💻 Windows 10/11, macOS 11+, Ubuntu 20.04+, or any NPM-enabled device</li>
+                    <li>🧠 At least 4GB RAM (memory)</li>
+                    <li>💾 500MB free space on your hard drive</li>
+                    <li>🌐 Internet connection</li>
+                    <li>📦 Node.js and NPM installed (for NPM-enabled devices)</li>
+                </ul>
+            </div>
+
+            <div class="info-banner" style="background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); border-left-color: #667eea;">
+                <h4>🎁 What You Get:</h4>
+                <ul>
+                    <li>🤖 AI chatbot that's like having a smart friend to help you learn!</li>
+                    <li>👨‍👩‍👧 Special parent dashboard so parents can keep you safe</li>
+                    <li>🛡️ Super strong protection from bad websites and viruses</li>
+                    <li>🎯 Only kid-friendly and educational websites</li>
+                    <li>🔒 Complete privacy - we don't spy on you at all!</li>
+                    <li>📚 Tons of cool learning resources and homework help!</li>
+                    <li>💻 Works on any NPM-enabled device!</li>
+                    <li>🔗 Open source on GitHub: <a href="https://github.com/sreyas28/BasicBrowser.git" target="_blank" style="color: #667eea; text-decoration: underline;">View Source Code</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="trust-section">
+            <h3>Trusted by Parents Everywhere! 👪</h3>
+            <div class="trust-badges">
+                <div class="badge" title="Safe for Kids">✅</div>
+                <div class="badge" title="Award Winner">🏆</div>
+                <div class="badge" title="Parent Approved">👍</div>
+                <div class="badge" title="Secure & Safe">🔐</div>
+                <div class="badge" title="100% Free">🆓</div>
+            </div>
+        </div>
+
+        <footer>
+            <p>🌈 © 2026 CurioBrowser - Making the Internet Safe and Fun! 🌈</p>
+            <p style="margin-top: 15px; font-size: 16px;">✨ Free Forever • No Ads • No Data Collection • Made with ❤️ for Kids ✨</p>
+        </footer>
+    </div>
+
+    <div class="notification" id="notification">
+        ✓ Yay! Download started! Check your downloads folder! 🎉
+    </div>
+
+    <script>
+        function downloadFile(os) {
+            const notification = document.getElementById('notification');
+            
+            // Show notification
+            notification.style.display = 'block';
+            
+            // Simulate download
+            console.log(`Downloading CurioBrowser for ${os}`);
+            
+            // In a real scenario:
+            // window.location.href = '/downloads/curiobrowser-' + os + '.exe';
+            
+            // Hide notification after 3 seconds
+            setTimeout(() => {
+                notification.style.display = 'none';
+            }, 3000);
+        }
+
+        // Add some interactive sparkle effects
+        document.addEventListener('mousemove', function(e) {
+            if (Math.random() > 0.95) {
+                const sparkle = document.createElement('div');
+                sparkle.innerHTML = '✨';
+                sparkle.style.position = 'fixed';
+                sparkle.style.left = e.clientX + 'px';
+                sparkle.style.top = e.clientY + 'px';
+                sparkle.style.fontSize = '20px';
+                sparkle.style.pointerEvents = 'none';
+                sparkle.style.animation = 'fadeOut 1s forwards';
+                sparkle.style.zIndex = '9999';
+                document.body.appendChild(sparkle);
+                
+                setTimeout(() => sparkle.remove(), 1000);
+            }
+        });
+
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes fadeOut {
+                to {
+                    opacity: 0;
+                    transform: translateY(-30px);
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>
